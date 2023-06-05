@@ -12,7 +12,7 @@ function JobPage() {
     getJob(jobId).then(setJob);
   }, [jobId]);
 
-  if (!job) return;
+  if (!job) return <>Loading...</>;
 
   return (
     <div>
