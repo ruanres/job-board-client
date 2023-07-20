@@ -37,26 +37,34 @@ export async function getJobs() {
       }
     }
   `;
-  const { data: { jobs }} = await apolloClient.query({query});
+  const { data: { jobs }} = await apolloClient.query({
+    query,
+    fetchPolicy: 'network-only',
+  });
   return jobs;
 }
 
-export async function getJob(id) {
-  const query = gql`
-    query {
-      job(id: "${id}") {
-        title
+const jobByIdQuery = gql`
+  query JobById($id: ID!) {
+    job(id: $id) {
+      id
+      title
+      description
+      date
+      company {
         id
-        date
-        description
-        company {
-          id
-          name
-        }
+        name
       }
     }
-  `;
-  const { data: { job }} = await apolloClient.query({query});
+  }
+`;
+
+export async function getJob(id) {
+  const query = jobByIdQuery;
+  const { data: { job }} = await apolloClient.query({
+    query,
+    variables: { id }
+  });
   return job;
 }
 
@@ -95,6 +103,16 @@ export async function createJob(title, description) {
       }
     }
   `;
-  const { data: { job }} = await apolloClient.mutate({ mutation, variables: {input} });
+  const { data: { job }} = await apolloClient.mutate({ 
+    mutation, 
+    variables: {input},
+    update: (cache, { data }) => {
+      cache.writeQuery({
+        query: jobByIdQuery,
+        variables: { id: data.job.id },
+        data,
+      })
+    }
+  });
   return job;
 }
