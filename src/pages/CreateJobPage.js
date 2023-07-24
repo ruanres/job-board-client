@@ -1,11 +1,18 @@
-import { useState } from 'react';
-import { createJob } from '../lib/graphql/queries';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import useCreateJob from '../hooks/useCreateJob';
 
 function CreateJobPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const { createJob, job } = useCreateJob();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if(job) {
+      navigate(`/jobs/${job.id}`);
+    }
+  }, [navigate, job]);
 
   const clearForm = () => {
     setTitle('');
@@ -14,9 +21,8 @@ function CreateJobPage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const job = await createJob(title, description);
+    createJob(title, description);
     clearForm();
-    navigate(`/jobs/${job.id}`);
   };
 
   return (

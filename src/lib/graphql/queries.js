@@ -75,26 +75,11 @@ export const GET_COMPANY = gql`
   }
 `;
 
-export async function createJob(title, description) {
-  const input = { title, description };
-  const mutation = gql`
-    mutation CreateJob($input: CreateJobInput!) {
-      job: createJob(input: $input) {
-        ...JobDetail
-      }
+export const CREATE_JOB = gql`
+  mutation CreateJob($input: CreateJobInput!) {
+    job: createJob(input: $input) {
+      ...JobDetail
     }
-    ${jobDetailFragment}
-  `;
-  const { data: { job }} = await apolloClient.mutate({ 
-    mutation, 
-    variables: {input},
-    update: (cache, { data }) => {
-      cache.writeQuery({
-        query: GET_JOB,
-        variables: { id: data.job.id },
-        data,
-      })
-    }
-  });
-  return job;
-}
+  }
+  ${jobDetailFragment}
+`;
