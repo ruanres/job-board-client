@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client";
 import { CREATE_JOB, GET_JOB } from "../lib/graphql/queries";
 
 export default function useCreateJob() {
-  const [mutate, { data, loading }] = useMutation(CREATE_JOB, {
+  const [mutate, { loading }] = useMutation(CREATE_JOB, {
     update: (cache, { data }) => {
       cache.writeQuery({
         query: GET_JOB,
@@ -11,13 +11,13 @@ export default function useCreateJob() {
       })
     }
   });
-  
+
   return { 
-    createJob: (title, description) => {
+    createJob: async (title, description) => {
       const input = {title, description};
-      mutate({variables: { input }});
+      const { data } = await mutate({variables: { input }});
+      return data.job;
     }, 
-    job: data?.job, 
     loading 
   };
 }

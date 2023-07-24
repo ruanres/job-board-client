@@ -1,18 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import useCreateJob from '../hooks/useCreateJob';
 
 function CreateJobPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const { createJob, job } = useCreateJob();
+  const { createJob, loading } = useCreateJob();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if(job) {
-      navigate(`/jobs/${job.id}`);
-    }
-  }, [navigate, job]);
 
   const clearForm = () => {
     setTitle('');
@@ -21,8 +15,9 @@ function CreateJobPage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    createJob(title, description);
+    const job = await createJob(title, description);
     clearForm();
+    navigate(`/jobs/${job.id}`);
   };
 
   return (
@@ -54,7 +49,7 @@ function CreateJobPage() {
           </div>
           <div className="field">
             <div className="control">
-              <button className="button is-link" onClick={handleSubmit}>
+              <button className="button is-link" onClick={handleSubmit} disabled={loading}>
                 Submit
               </button>
             </div>
