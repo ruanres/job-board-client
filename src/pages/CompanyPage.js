@@ -1,24 +1,23 @@
 import { useParams } from 'react-router';
-import { GET_COMPANY } from '../lib/graphql/queries';
 import JobList from '../components/JobList';
-import { useQuery } from '@apollo/client';
+import useCompany from '../hooks/useCompany';
 
 function CompanyPage() {
   const { companyId } = useParams();
-  const { data, loading } = useQuery(GET_COMPANY, { variables: { companyId }});
+  const { company, loading } = useCompany(companyId);
 
   if(loading) return <>Loading...</>;
 
   return (
     <div>
       <h1 className="title">
-        {data.company.name}
+        {company.name}
       </h1>
       <div className="box">
-        {data.company.description}
+        {company.description}
       </div>
-      <h2 className='title is-5'>Jobs at {data.company.name}</h2>
-      <JobList jobs={data.company.jobs} />
+      <h2 className='title is-5'>Jobs at {company.name}</h2>
+      <JobList jobs={company.jobs} />
     </div>
   );
 }

@@ -60,8 +60,8 @@ export const GET_JOB = gql`
 `;
 
 export const GET_COMPANY = gql`
-  query Company($companyId: ID!) {
-    company(id: $companyId) {
+  query Company($id: ID!) {
+    company(id: $id) {
       description
       id
       name

@@ -1,16 +1,15 @@
 import JobList from '../components/JobList';
-import { GET_JOBS } from '../lib/graphql/queries';
-import { useQuery } from '@apollo/client';
+import useJobs from '../hooks/useJobs';
 
 function HomePage() {
-  const {loading, data} = useQuery(GET_JOBS, {fetchPolicy: 'network-only'});
+  const { loading, jobs } = useJobs();
 
   return (
     <div>
       <h1 className="title">
         Job Board
       </h1>
-      {loading ? <h1>Loading...</h1> : <JobList jobs={data.jobs} />}
+      {loading ? <h1>Loading...</h1> : <JobList jobs={jobs} />}
     </div>
   );
 }

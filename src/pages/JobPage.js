@@ -1,17 +1,14 @@
 import { useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { formatDate } from '../lib/formatters';
-import { GET_JOB } from '../lib/graphql/queries';
-import { useQuery } from '@apollo/client';
+import useJob from '../hooks/useJob';
 
 function JobPage() {
   const { jobId } = useParams();
-  const { data, loading } = useQuery(GET_JOB, {variables: {id: jobId}});
+  const { job, loading } = useJob(jobId);
 
   if (loading) return <>Loading...</>;
 
-  const {job} = data;
-  
   return (
     <div>
       <h1 className="title is-2">
