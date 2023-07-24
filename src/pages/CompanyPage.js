@@ -1,28 +1,24 @@
 import { useParams } from 'react-router';
-import { useEffect, useState } from 'react';
-import { getCompany } from '../lib/graphql/queries';
+import { GET_COMPANY } from '../lib/graphql/queries';
 import JobList from '../components/JobList';
+import { useQuery } from '@apollo/client';
 
 function CompanyPage() {
-  const [company, setCompany] = useState()
   const { companyId } = useParams();
+  const { data, loading } = useQuery(GET_COMPANY, { variables: { companyId }});
 
-  useEffect(() => {
-    getCompany(companyId).then(setCompany);
-  }, [companyId]);
-
-  if(!company) return <>Loading...</>;
+  if(loading) return <>Loading...</>;
 
   return (
     <div>
       <h1 className="title">
-        {company.name}
+        {data.company.name}
       </h1>
       <div className="box">
-        {company.description}
+        {data.company.description}
       </div>
-      <h2 className='title is-5'>Jobs at {company.name}</h2>
-      <JobList jobs={company.jobs} />
+      <h2 className='title is-5'>Jobs at {data.company.name}</h2>
+      <JobList jobs={data.company.jobs} />
     </div>
   );
 }
